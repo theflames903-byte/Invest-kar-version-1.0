@@ -1,0 +1,248 @@
+# This file defines the UI for the InvestmentApp.
+# Kivy automatically loads this file because its name matches the App class name.
+
+# Define a base for our buttons to reduce repetition
+<MyButton@Button>:
+    size_hint_y: None
+    height: 50
+
+# Define a base for our text inputs
+<MyTextInput@TextInput>:
+    size_hint_y: None
+    height: 50
+    multiline: False
+
+<AuthScreen>:
+    # The AuthScreen will dynamically show either the login or register view.
+    # The logic for this remains in the Python file.
+
+<HomeScreen>:
+    # on_enter is a special Kivy event that fires when the screen is displayed.
+    on_enter: root.refresh_ui()
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 20
+        spacing: 15
+
+        Label:
+            text: '💰 Invest Kar - Grow Your Money'  # ✅ Updated
+            font_size: '20sp'
+            bold: True
+            size_hint_y: None
+            height: 40
+
+        ScrollView:
+            # This layout will contain the dynamically generated plan cards
+            BoxLayout:
+                id: plans_layout
+                orientation: 'vertical'
+                spacing: 15
+                size_hint_y: None
+                height: self.minimum_height
+
+<InvestScreen>:
+    on_enter: root.refresh_investments()
+
+    ScrollView:
+        id: scroll_view
+        # The content will be added dynamically from the Python code
+
+<ProfileScreen>:
+    on_enter: root.refresh_profile()
+
+    ScrollView:
+        BoxLayout:
+            orientation: 'vertical'
+            spacing: 15
+            padding: 20
+            size_hint_y: None
+            height: self.minimum_height
+
+            # Profile info Card
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_y: None
+                height: 100
+                padding: 15
+                canvas.before:
+                    Color:
+                        rgba: 0.2, 0.2, 0.2, 0.5
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [10]
+                Label:
+                    id: phone_label
+                    font_size: '18sp'
+                    bold: True
+                Label:
+                    id: referral_label
+                    font_size: '14sp'
+
+            # Wallet Card
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_y: None
+                height: 120
+                padding: 15
+                spacing: 10
+                canvas.before:
+                    Color:
+                        rgba: 0.2, 0.2, 0.2, 0.5
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                        radius: [10]
+                Label:
+                    text: '💰 Wallet Balance'
+                    font_size: '16sp'
+                    bold: True
+                Label:
+                    id: balance_label
+                    font_size: '24sp'
+                    bold: True
+                MyButton:
+                    text: 'Withdraw Money'
+                    height: 40
+                    background_color: (0.2, 0.8, 0.2, 1)
+                    on_press: root.show_withdrawal()
+
+            # Transactions Section
+            Label:
+                id: recent_transactions_title
+                text: 'Recent Transactions'
+                font_size: '16sp'
+                bold: True
+                size_hint_y: None
+                height: 30
+                opacity: 0 # Hidden by default
+
+            BoxLayout:
+                id: transactions_list
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: 5
+
+            # Spacer
+            Widget:
+                size_hint_y: None
+                height: 20
+
+            # Logout Button
+            MyButton:
+                text: 'Logout'
+                background_color: (0.8, 0.2, 0.2, 1)
+                on_press: root.logout()
+
+<AdminScreen>:
+    # The AdminScreen UI is complex and stateful, so we'll keep its UI
+    # generation logic within its Python class for now. This is a valid
+    # approach for highly dynamic interfaces.
+
+# --- Login/Register UI Definitions ---
+# These are not Kivy classes, but templates we can use in Python.
+# We define them here to keep all UI code in one place.
+
+<LoginView@BoxLayout>:
+    orientation: 'vertical'
+    padding: 30
+    spacing: 20
+    phone_input: phone_input
+    security_input: security_input
+
+    Label:
+        text: '💰 Invest Kar'  # ✅ Updated
+        font_size: '24sp'
+        bold: True
+        size_hint_y: None
+        height: 50
+    MyTextInput:
+        id: phone_input
+        hint_text: 'Phone Number (10 digits)'
+        input_filter: 'int'
+    MyTextInput:
+        id: security_input
+        hint_text: 'Security Code (6 digits)'
+        password: True
+        input_filter: 'int'
+    MyButton:
+        text: 'Login'
+        background_color: (0.2, 0.6, 0.86, 1)
+        on_press: app.root.get_screen('auth').login(self)
+    MyButton:
+        text: 'New User? Register'
+        height: 40
+        background_color: (0.4, 0.4, 0.4, 1)
+        on_press: app.root.get_screen('auth').show_register()
+    Label:
+        text: 'Customer Care: +91-9876543210'
+        font_size: '12sp'
+        size_hint_y: None
+        height: 30
+    MyButton:
+        text: 'Admin Access'
+        height: 40
+        background_color: (0.8, 0.2, 0.2, 1)
+        on_press: app.root.get_screen('auth').go_to_admin()
+
+<RegisterView@BoxLayout>:
+    orientation: 'vertical'
+    padding: 30
+    spacing: 20
+    reg_phone: reg_phone
+    otp_section: otp_section
+    otp_input: otp_input
+    reg_security: reg_security
+    referral_input: referral_input
+
+    Label:
+        text: '📝 Register'
+        font_size: '24sp'
+        bold: True
+        size_hint_y: None
+        height: 50
+    MyTextInput:
+        id: reg_phone
+        hint_text: 'Phone Number (10 digits)'
+        input_filter: 'int'
+    MyButton:
+        text: 'Send OTP & Security Code'
+        background_color: (0.2, 0.8, 0.2, 1)
+        on_press: app.root.get_screen('auth').send_otp(self)
+
+    BoxLayout:
+        id: otp_section
+        orientation: 'vertical'
+        spacing: 10
+        disabled: True
+        opacity: 0
+        size_hint_y: None
+        height: self.minimum_height
+
+        Label:
+            text: 'OTP & Security Code sent via SMS'
+            font_size: '12sp'
+            size_hint_y: None
+            height: 30
+        MyTextInput:
+            id: otp_input
+            hint_text: 'Enter OTP (6 digits)'
+            input_filter: 'int'
+        MyTextInput:
+            id: reg_security
+            hint_text: 'Enter Security Code from SMS'
+            input_filter: 'int'
+        MyTextInput:
+            id: referral_input
+            hint_text: 'Referral Code (Optional)'
+
+    MyButton:
+        text: 'Complete Registration'
+        background_color: (0.2, 0.6, 0.86, 1)
+        on_press: app.root.get_screen('auth').register(self)
+    MyButton:
+        text: '← Back to Login'
+        height: 40
+        on_press: app.root.get_screen('auth').show_login()
